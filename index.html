@@ -1,0 +1,56 @@
+<html>
+<head>
+  <script
+    src="https://code.jquery.com/jquery-2.2.4.js"
+    integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+    crossorigin="anonymous"></script>
+
+</head>
+<body >
+    <h1 style="z-index: 200; color: red; width: 300px; position: absolute;">ISS Current Location</h1>
+    <h5 style="z-index: 200; color: orange; width: 300px; position: absolute;top:50px">Update every 5 Seconds</h5>
+    <img src="mercator.png" style="position:absolute;top:0px;left:0px;width:100%">
+    <script language="Javascript">
+    var dot_size = 50;
+    var longitude_shift = 55;   // number of pixels your map's prime meridian is off-center.
+    var x_pos = 54;
+    var y_pos = 19;
+    var map_width = 430;
+    var map_height = 332;
+    var half_dot = Math.floor(dot_size / 2);
+    function draw_point(x, y) {
+        document.getElementById("iss").style.left = x + "px";
+        document.getElementById("iss").style.top =  y + "px";
+    }
+    function plot_point(lat, lng) {
+        // Mercator projection
+        console.log(lat,lng);
+
+        // longitude: just scale and shift
+        x = (map_width * (180 + lng) / 360) % map_width + longitude_shift;
+
+        // latitude: using the Mercator projection
+        lat = lat * Math.PI / 180;  // convert from degrees to radians
+        y = Math.log(Math.tan((lat/2) + (Math.PI/4)));  // do the Mercator projection (w/ equator of 2pi units)
+        y = (map_height / 2) - (map_width * y / (2 * Math.PI)) + y_pos;   // fit it to our map
+
+        x -= x_pos;
+        y -= y_pos;
+
+        draw_point(x - half_dot, y - half_dot);
+    }
+    dot = '<img id="iss" style="position:absolute;width:' + dot_size + 'px;height:' + dot_size + 'px;top:' + 0 + 'px;left:' + 0 + 'px;background:#ff000063" src="iss.png"/>';
+    document.body.innerHTML += dot;
+    function getPos(){
+      $.getJSON( "http://api.open-notify.org/iss-now.json", function( json ) {
+        plot_point(json.iss_position.latitude, json.iss_position.longitude);
+      });
+    }
+    getPos();
+    window.setInterval(function(){
+      getPos();
+    },5000)
+
+    </script>
+</body>
+</html>
