@@ -13,10 +13,8 @@
     <script language="Javascript">
     var dot_size = 50;
     var longitude_shift = 55;   // number of pixels your map's prime meridian is off-center.
-    var x_pos = 54;
-    var y_pos = 19;
-    var map_width = 430;
-    var map_height = 332;
+    var x_pos = 0;
+    var y_pos = 0;
     var half_dot = Math.floor(dot_size / 2);
     function draw_point(x, y) {
         document.getElementById("iss").style.left = x + "px";
@@ -25,6 +23,8 @@
     function plot_point(lat, lng) {
         // Mercator projection
         console.log(lat,lng);
+      var map_width = $("#img").width();
+            var map_height = $("#img").height();
 
         // longitude: just scale and shift
         x = (map_width * (180 + lng) / 360) % map_width + longitude_shift;
